@@ -6,7 +6,7 @@ import {
   rollupToStencilSourceMap,
   stringifyRuntimeData,
 } from '@utils';
-import type { SourceMap as RollupSourceMap } from 'rollup';
+import type { SourceMap as RollupSourceMap } from 'rolldown';
 
 import type * as d from '../../../declarations';
 import { optimizeModule } from '../../optimize/optimize-module';

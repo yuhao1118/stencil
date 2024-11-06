@@ -148,6 +148,10 @@ export function createReplaceData(opts: BuildOptions): Record<string, any> {
     '__VERSION:TYPESCRIPT__': opts.typescriptVersion,
 
     __VERMOJI__: opts.vermoji,
+
+    // TODO: this is a hack to get import.meta.url to work in esbuild
+    // TODO: this should be fixed in esbuild or use @chialab/esbuild-plugin-meta-url
+    'import.meta.url': `"file://" + __filename`,
   };
 }
 

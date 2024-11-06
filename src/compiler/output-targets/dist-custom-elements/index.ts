@@ -122,8 +122,8 @@ export const bundleCustomElements = async (
         sourcemap: config.sourceMap,
         chunkFileNames: outputTarget.externalRuntime || !config.hashFileNames ? '[name].js' : 'p-[hash].js',
         entryFileNames: '[name].js',
-        hoistTransitiveImports: false,
-        preferConst: true,
+        // hoistTransitiveImports: false,
+        // preferConst: true,
       });
 
       // the output target should have been validated at this point - as a result, we expect this field

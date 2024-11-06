@@ -1,4 +1,5 @@
 import { result } from '@utils';
+import type { SourceMap as RolldownSourceMap } from 'rolldown';
 
 import type { InMemoryFileSystem } from '../compiler/sys/in-memory-fs';
 import type { CPSerializable } from './child_process';
@@ -393,16 +394,7 @@ export interface RollupChunkResult {
   map?: RollupSourceMap;
 }
 
-export interface RollupSourceMap {
-  file: string;
-  mappings: string;
-  names: string[];
-  sources: string[];
-  sourcesContent: string[];
-  version: number;
-  toString(): string;
-  toUrl(): string;
-}
+export type RollupSourceMap = RolldownSourceMap;
 
 /**
  * Result of Stencil compressing, mangling, and otherwise 'minifying' JavaScript

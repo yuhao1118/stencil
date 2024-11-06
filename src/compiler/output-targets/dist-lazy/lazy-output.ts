@@ -22,7 +22,7 @@ import { updateStencilCoreImports } from '../../transformers/update-stencil-core
 import { generateCjs } from './generate-cjs';
 import { generateEsm } from './generate-esm';
 import { generateEsmBrowser } from './generate-esm-browser';
-import { generateSystem } from './generate-system';
+// import { generateSystem } from './generate-system';
 import { getLazyBuildConditionals } from './lazy-build-conditionals';
 
 export const outputLazy = async (
@@ -68,7 +68,7 @@ export const outputLazy = async (
       const results: d.UpdatedLazyBuildCtx[] = await Promise.all([
         generateEsmBrowser(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
         generateEsm(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateSystem(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
+        // generateSystem(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
         generateCjs(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
       ]);
 

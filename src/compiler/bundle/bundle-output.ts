@@ -2,8 +2,8 @@ import rollupCommonjsPlugin from '@rollup/plugin-commonjs';
 import rollupJsonPlugin from '@rollup/plugin-json';
 import rollupNodeResolvePlugin from '@rollup/plugin-node-resolve';
 import rollupReplacePlugin from '@rollup/plugin-replace';
-import { createOnWarnFn, isString, loadRollupDiagnostics } from '@utils';
-import { PluginContext, rollup, RollupOptions, TreeshakingOptions } from 'rollup';
+import { createOnWarnFn, loadRollupDiagnostics } from '@utils';
+import { rolldown, RollupOptions } from 'rolldown';
 
 import type * as d from '../../declarations';
 import { lazyComponentPlugin } from '../output-targets/dist-lazy/lazy-component-plugin';
@@ -11,7 +11,6 @@ import { createCustomResolverAsync } from '../sys/resolve/resolve-module-async';
 import { appDataPlugin } from './app-data-plugin';
 import type { BundleOptions } from './bundle-interface';
 import { coreResolvePlugin } from './core-resolve-plugin';
-import { devNodeModuleResolveId } from './dev-node-module-resolve';
 import { extFormatPlugin } from './ext-format-plugin';
 import { extTransformsPlugin } from './ext-transforms-plugin';
 import { fileLoadPlugin } from './file-load-plugin';
@@ -30,9 +29,9 @@ export const bundleOutput = async (
 ) => {
   try {
     const rollupOptions = getRollupOptions(config, compilerCtx, buildCtx, bundleOpts);
-    const rollupBuild = await rollup(rollupOptions);
+    const rollupBuild = await rolldown(rollupOptions);
 
-    compilerCtx.rollupCache.set(bundleOpts.id, rollupBuild.cache);
+    // compilerCtx.rollupCache.set(bundleOpts.id, rollupBuild.cache);
     return rollupBuild;
   } catch (e: any) {
     if (!buildCtx.hasError) {
@@ -74,40 +73,43 @@ export const getRollupOptions = (
     ...(config.nodeResolve as any),
   });
 
-  const orgNodeResolveId = nodeResolvePlugin.resolveId;
-  const orgNodeResolveId2 = (nodeResolvePlugin.resolveId = async function (importee: string, importer: string) {
-    const [realImportee, query] = importee.split('?');
-    const resolved = await orgNodeResolveId.call(
-      nodeResolvePlugin as unknown as PluginContext,
-      realImportee,
-      importer,
-      {},
-    );
-    if (resolved) {
-      if (isString(resolved)) {
-        return query ? resolved + '?' + query : resolved;
-      }
-      return {
-        ...resolved,
-        id: query ? resolved.id + '?' + query : resolved.id,
-      };
-    }
-    return resolved;
-  });
-  if (config.devServer?.experimentalDevModules) {
-    nodeResolvePlugin.resolveId = async function (importee: string, importer: string) {
-      const resolvedId = await orgNodeResolveId2.call(
-        nodeResolvePlugin as unknown as PluginContext,
-        importee,
-        importer,
-      );
-      return devNodeModuleResolveId(config, compilerCtx.fs, resolvedId, importee);
-    };
-  }
+  // const orgNodeResolveId = nodeResolvePlugin.resolveId;
+  // const orgNodeResolveId2 = (nodeResolvePlugin.resolveId = async function (importee: string, importer: string) {
+  //   const [realImportee, query] = importee.split('?');
+  //   const resolved = await orgNodeResolveId.call(
+  //     nodeResolvePlugin as unknown as PluginContext,
+  //     realImportee,
+  //     importer,
+  //     {},
+  //   );
+  //   if (resolved) {
+  //     if (isString(resolved)) {
+  //       return query ? resolved + '?' + query : resolved;
+  //     }
+  //     return {
+  //       ...resolved,
+  //       id: query ? resolved.id + '?' + query : resolved.id,
+  //     };
+  //   }
+  //   return resolved;
+  // });
+  // if (config.devServer?.experimentalDevModules) {
+  //   nodeResolvePlugin.resolveId = async function (importee: string, importer: string) {
+  //     const resolvedId = await orgNodeResolveId2.call(
+  //       nodeResolvePlugin as unknown as PluginContext,
+  //       importee,
+  //       importer,
+  //     );
+  //     return devNodeModuleResolveId(config, compilerCtx.fs, resolvedId, importee);
+  //   };
+  // }
 
   const beforePlugins = config.rollupPlugins.before || [];
   const afterPlugins = config.rollupPlugins.after || [];
   const rollupOptions: RollupOptions = {
+    define: {
+      'import.meta.url': `require("url").pathToFileURL(__filename)`,
+    },
     input: bundleOpts.inputs,
     output: {
       inlineDynamicImports: bundleOpts.inlineDynamicImports ?? false,
@@ -145,12 +147,12 @@ export const getRollupOptions = (
       fileLoadPlugin(compilerCtx.fs),
     ],
 
-    treeshake: getTreeshakeOption(config, bundleOpts),
-    preserveEntrySignatures: bundleOpts.preserveEntrySignatures ?? 'strict',
+    // treeshake: getTreeshakeOption(config, bundleOpts),
+    // preserveEntrySignatures: bundleOpts.preserveEntrySignatures ?? 'strict',
 
     onwarn: createOnWarnFn(buildCtx.diagnostics),
 
-    cache: compilerCtx.rollupCache.get(bundleOpts.id),
+    // cache: compilerCtx.rollupCache.get(bundleOpts.id),
 
     external: config.rollupConfig.inputOptions.external,
   };
@@ -158,20 +160,20 @@ export const getRollupOptions = (
   return rollupOptions;
 };
 
-const getTreeshakeOption = (config: d.ValidatedConfig, bundleOpts: BundleOptions): TreeshakingOptions | boolean => {
-  if (bundleOpts.platform === 'hydrate') {
-    return {
-      propertyReadSideEffects: false,
-      tryCatchDeoptimization: false,
-    };
-  }
+// const getTreeshakeOption = (config: d.ValidatedConfig, bundleOpts: BundleOptions): TreeshakingOptions | boolean => {
+//   if (bundleOpts.platform === 'hydrate') {
+//     return {
+//       propertyReadSideEffects: false,
+//       tryCatchDeoptimization: false,
+//     };
+//   }
 
-  const treeshake =
-    !config.devMode && config.rollupConfig.inputOptions.treeshake !== false
-      ? {
-          propertyReadSideEffects: false,
-          tryCatchDeoptimization: false,
-        }
-      : false;
-  return treeshake;
-};
+//   const treeshake =
+//     !config.devMode && config.rollupConfig.inputOptions.treeshake !== false
+//       ? {
+//           propertyReadSideEffects: false,
+//           tryCatchDeoptimization: false,
+//         }
+//       : false;
+//   return treeshake;
+// };

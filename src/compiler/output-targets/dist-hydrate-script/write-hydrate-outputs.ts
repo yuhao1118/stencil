@@ -1,6 +1,6 @@
 import { join } from '@utils';
 import { basename } from 'path';
-import type { RollupOutput } from 'rollup';
+import type { RollupOutput } from 'rolldown';
 
 import type * as d from '../../../declarations';
 import { MODE_RESOLUTION_CHAIN_DECLARATION } from './hydrate-factory-closure';

@@ -1,5 +1,5 @@
 import { generatePreamble, join, relativeImport } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rollup';
+import type { OutputOptions, RollupBuild } from 'rolldown';
 
 import type * as d from '../../../declarations';
 import type { RollupResult } from '../../../declarations';
@@ -21,7 +21,7 @@ export const generateEsm = async (
       format: 'es',
       entryFileNames: '[name].js',
       assetFileNames: '[name]-[hash][extname]',
-      preferConst: true,
+      // preferConst: true,
       sourcemap: config.sourceMap,
     };
     const outputTargetType = esmOutputs[0].type;

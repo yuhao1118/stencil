@@ -1,6 +1,6 @@
 import { generatePreamble, join, relative } from '@utils';
 import { basename, dirname } from 'path';
-import { OutputOptions, rollup } from 'rollup';
+import { OutputOptions, rolldown } from 'rolldown';
 
 import type * as d from '../../declarations';
 import { BuildContext } from '../build/build-ctx';
@@ -96,7 +96,7 @@ const bundleDevModule = async (
         index: parsedUrl.nodeResolvedPath,
       },
     });
-    const rollupBuild = await rollup(inputOpts);
+    const rollupBuild = await rolldown(inputOpts);
 
     const outputOpts: OutputOptions = {
       banner: generatePreamble(config),

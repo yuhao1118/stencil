@@ -1,8 +1,7 @@
 import type * as d from '@stencil/core/declarations';
 import { catchError, createOnWarnFn, generatePreamble, join, loadRollupDiagnostics } from '@utils';
 import MagicString from 'magic-string';
-import { RollupOptions } from 'rollup';
-import { rollup, type RollupBuild } from 'rollup';
+import { rolldown, type RollupBuild, type RollupOptions } from 'rolldown';
 
 import {
   STENCIL_APP_DATA_ID,
@@ -62,7 +61,7 @@ export const generateHydrateApp = async (
       external: ['stream'],
 
       input,
-      inlineDynamicImports: true,
+      // inlineDynamicImports: true,
       plugins: [
         {
           name: 'hydrateAppPlugin',
@@ -98,7 +97,7 @@ export const generateHydrateApp = async (
       onwarn: createOnWarnFn(buildCtx.diagnostics),
     };
 
-    const rollupAppBuild = await rollup(rollupOptions);
+    const rollupAppBuild = await rolldown(rollupOptions);
     await Promise.all([
       buildHydrateAppFor('cjs', rollupAppBuild, config, compilerCtx, buildCtx, outputTargets),
       buildHydrateAppFor('esm', rollupAppBuild, config, compilerCtx, buildCtx, outputTargets),
@@ -122,10 +121,10 @@ const generateHydrateFactory = async (config: d.ValidatedConfig, compilerCtx: d.
         const rollupOutput = await rollupFactoryBuild.generate({
           format: 'cjs',
           esModule: false,
-          strict: false,
+          // strict: false,
           intro: HYDRATE_FACTORY_INTRO,
           outro: HYDRATE_FACTORY_OUTRO,
-          preferConst: false,
+          // preferConst: false,
           inlineDynamicImports: true,
         });
 
