@@ -1,4 +1,10 @@
-import type { PreserveEntrySignaturesOption } from 'rollup';
+import type {
+  OutputOptions as RollupOutputOptions,
+  PreserveEntrySignaturesOption,
+  RollupOptions,
+  RollupOutput,
+  SourceMap as RollupSourceMap,
+} from 'rollup';
 import type { SourceFile, TransformerFactory } from 'typescript';
 
 import type { BuildConditionals } from '../../declarations';
@@ -58,4 +64,13 @@ export interface BundleOptions {
    * @see {@link https://rollupjs.org/guide/en/#preserveentrysignatures}
    */
   preserveEntrySignatures?: PreserveEntrySignaturesOption;
+}
+
+export type BundleInputOptions = RollupOptions;
+export type BundleOutputOptions = RollupOutputOptions;
+export type BundleOutput = RollupOutput;
+export type BundlerSourceMap = RollupSourceMap;
+
+export interface Bundler {
+  generate: (options: BundleOutputOptions) => Promise<BundleOutput>;
 }

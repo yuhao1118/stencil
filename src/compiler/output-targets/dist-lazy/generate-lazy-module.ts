@@ -1,14 +1,14 @@
 import {
+  bundlerToStencilSourceMap,
   formatComponentRuntimeMeta,
   getSourceMappingUrlForEndOfFile,
   hasDependency,
   join,
-  rollupToStencilSourceMap,
   stringifyRuntimeData,
 } from '@utils';
-import type { SourceMap as RollupSourceMap } from 'rolldown';
 
 import type * as d from '../../../declarations';
+import type { BundlerSourceMap } from '../../../declarations';
 import { optimizeModule } from '../../optimize/optimize-module';
 import { writeLazyModule } from './write-lazy-entry-module';
 
@@ -18,7 +18,7 @@ export const generateLazyModules = async (
   buildCtx: d.BuildCtx,
   outputTargetType: string,
   destinations: string[],
-  results: d.RollupResult[],
+  results: d.BundlerResult[],
   sourceTarget: d.SourceTarget,
   isBrowserBuild: boolean,
   sufix: string,
@@ -27,7 +27,7 @@ export const generateLazyModules = async (
     return [];
   }
   const shouldMinify = !!(config.minifyJs && isBrowserBuild);
-  const rollupResults = results.filter((r): r is d.RollupChunkResult => r.type === 'chunk');
+  const rollupResults = results.filter((r): r is d.BundlerChunkResult => r.type === 'chunk');
   const entryComponentsResults = rollupResults.filter((rollupResult) => rollupResult.isComponent);
   const chunkResults = rollupResults.filter((rollupResult) => !rollupResult.isComponent && !rollupResult.isEntry);
 
@@ -89,8 +89,8 @@ export const generateLazyModules = async (
 
   await Promise.all(
     results
-      .filter((r): r is d.RollupAssetResult => r.type === 'asset')
-      .map((r: d.RollupAssetResult) => {
+      .filter((r): r is d.BundlerAssetResult => r.type === 'asset')
+      .map((r: d.BundlerAssetResult) => {
         return Promise.all(
           destinations.map((dest) => {
             return compilerCtx.fs.writeFile(join(dest, r.fileName), r.content);
@@ -109,8 +109,8 @@ export const generateLazyModules = async (
  * @param rollupChunkResults the results of running Rollup across a Stencil project
  * @param bundleModules lazy-loadable modules that can be resolved at runtime
  */
-const addStaticImports = (rollupChunkResults: d.RollupChunkResult[], bundleModules: d.BundleModule[]): void => {
-  rollupChunkResults.filter(isStencilCoreResult).forEach((index: d.RollupChunkResult) => {
+const addStaticImports = (rollupChunkResults: d.BundlerChunkResult[], bundleModules: d.BundleModule[]): void => {
+  rollupChunkResults.filter(isStencilCoreResult).forEach((index: d.BundlerChunkResult) => {
     const generateCjs = isCjsFormat(index) ? generateCaseClauseCjs : generateCaseClause;
     index.code = index.code.replace(
       '/*!__STENCIL_STATIC_IMPORT_SWITCH__*/',
@@ -133,7 +133,7 @@ const addStaticImports = (rollupChunkResults: d.RollupChunkResult[], bundleModul
  * @param rollupChunkResult the rollup chunk output to test
  * @returns true if the output chunk contains Stencil runtime code, false otherwise
  */
-const isStencilCoreResult = (rollupChunkResult: d.RollupChunkResult): boolean => {
+const isStencilCoreResult = (rollupChunkResult: d.BundlerChunkResult): boolean => {
   return (
     rollupChunkResult.isCore &&
     rollupChunkResult.entryKey === 'index' &&
@@ -148,7 +148,7 @@ const isStencilCoreResult = (rollupChunkResult: d.RollupChunkResult): boolean =>
  * @param rollupChunkResult the Rollup result to test
  * @returns true if the Rollup chunk has a commonjs module format, false otherwise
  */
-const isCjsFormat = (rollupChunkResult: d.RollupChunkResult): boolean => {
+const isCjsFormat = (rollupChunkResult: d.BundlerChunkResult): boolean => {
   return rollupChunkResult.moduleFormat === 'cjs' || rollupChunkResult.moduleFormat === 'commonjs';
 };
 
@@ -184,7 +184,7 @@ const generateLazyEntryModule = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupResult: d.RollupChunkResult,
+  rollupResult: d.BundlerChunkResult,
   outputTargetType: string,
   destinations: string[],
   sourceTarget: d.SourceTarget,
@@ -231,7 +231,7 @@ const writeLazyChunk = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupResult: d.RollupChunkResult,
+  rollupResult: d.BundlerChunkResult,
   outputTargetType: string,
   destinations: string[],
   sourceTarget: d.SourceTarget,
@@ -267,7 +267,7 @@ const writeLazyEntry = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupResult: d.RollupChunkResult,
+  rollupResult: d.BundlerChunkResult,
   outputTargetType: string,
   destinations: string[],
   lazyRuntimeData: string,
@@ -432,9 +432,9 @@ const convertChunk = async (
   isCore: boolean,
   isBrowserBuild: boolean,
   code: string,
-  rollupSrcMap: RollupSourceMap,
+  bundlerSrcMap: BundlerSourceMap,
 ) => {
-  let sourceMap = rollupToStencilSourceMap(rollupSrcMap);
+  let sourceMap = bundlerToStencilSourceMap(bundlerSrcMap);
   const inlineHelpers = isBrowserBuild || !hasDependency(buildCtx, 'tslib');
   const optimizeResults = await optimizeModule(config, compilerCtx, {
     input: code,

@@ -22,7 +22,7 @@ import { updateStencilCoreImports } from '../../transformers/update-stencil-core
 import { generateCjs } from './generate-cjs';
 import { generateEsm } from './generate-esm';
 import { generateEsmBrowser } from './generate-esm-browser';
-// import { generateSystem } from './generate-system';
+import { generateSystem } from './generate-system';
 import { getLazyBuildConditionals } from './lazy-build-conditionals';
 
 export const outputLazy = async (
@@ -63,13 +63,13 @@ export const outputLazy = async (
       bundleOpts.inputs[entryModule.entryKey] = entryModule.entryKey;
     });
 
-    const rollupBuild = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
-    if (rollupBuild != null) {
+    const bundler = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
+    if (bundler != null) {
       const results: d.UpdatedLazyBuildCtx[] = await Promise.all([
-        generateEsmBrowser(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateEsm(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        // generateSystem(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateCjs(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
+        generateEsmBrowser(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateEsm(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateSystem(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateCjs(config, compilerCtx, buildCtx, bundler, outputTargets),
       ]);
 
       results.forEach((result) => {

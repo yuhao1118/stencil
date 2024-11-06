@@ -1,8 +1,8 @@
 import { join } from '@utils';
 import { basename } from 'path';
-import type { RollupOutput } from 'rolldown';
 
 import type * as d from '../../../declarations';
+import type { BundleOutput } from '../../bundle/bundle-interface';
 import { MODE_RESOLUTION_CHAIN_DECLARATION } from './hydrate-factory-closure';
 import { relocateHydrateContextConst } from './relocate-hydrate-context';
 
@@ -11,11 +11,11 @@ export const writeHydrateOutputs = (
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
   outputTargets: d.OutputTargetHydrate[],
-  rollupOutput: RollupOutput,
+  bundlerOutput: BundleOutput,
 ) => {
   return Promise.all(
     outputTargets.map((outputTarget) => {
-      return writeHydrateOutput(config, compilerCtx, buildCtx, outputTarget, rollupOutput);
+      return writeHydrateOutput(config, compilerCtx, buildCtx, outputTarget, bundlerOutput);
     }),
   );
 };
@@ -25,7 +25,7 @@ const writeHydrateOutput = async (
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
   outputTarget: d.OutputTargetHydrate,
-  rollupOutput: RollupOutput,
+  bundlerOutput: BundleOutput,
 ) => {
   const hydratePackageName = await getHydratePackageName(config, compilerCtx);
 
@@ -56,7 +56,7 @@ const writeHydrateOutput = async (
   buildCtx.hydrateAppFilePath = hydrateCoreIndexPath;
 
   await Promise.all(
-    rollupOutput.output.map(async (output) => {
+    bundlerOutput.output.map(async (output) => {
       if (output.type === 'chunk') {
         output.code = relocateHydrateContextConst(config, compilerCtx, output.code);
 

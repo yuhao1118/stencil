@@ -1,10 +1,11 @@
 import { generatePreamble, join, relative } from '@utils';
 import { basename, dirname } from 'path';
-import { OutputOptions, rolldown } from 'rolldown';
 
 import type * as d from '../../declarations';
 import { BuildContext } from '../build/build-ctx';
-import { getRollupOptions } from './bundle-output';
+import type { BundleOutputOptions } from './bundle-interface';
+import { createBundler } from './bundler-helper';
+import { createBundlerConfig } from './bundler-options';
 import { DEV_MODULE_CACHE_BUSTER, DEV_MODULE_DIR } from './constants';
 
 export const compilerRequest = async (
@@ -89,16 +90,16 @@ const bundleDevModule = async (
   const buildCtx = new BuildContext(config, compilerCtx);
 
   try {
-    const inputOpts = getRollupOptions(config, compilerCtx, buildCtx, {
+    const inputOpts = createBundlerConfig(config, compilerCtx, buildCtx, {
       id: parsedUrl.nodeModuleId,
       platform: 'client',
       inputs: {
         index: parsedUrl.nodeResolvedPath,
       },
     });
-    const rollupBuild = await rolldown(inputOpts);
+    const bundler = await createBundler(config, inputOpts);
 
-    const outputOpts: OutputOptions = {
+    const outputOpts: BundleOutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
     };
@@ -109,7 +110,7 @@ const bundleDevModule = async (
       inputOpts.input = parsedUrl.nodeResolvedPath;
     }
 
-    const r = await rollupBuild.generate(outputOpts);
+    const r = await bundler.generate(outputOpts);
 
     if (buildCtx.hasError) {
       results.status = 500;

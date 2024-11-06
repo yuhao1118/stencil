@@ -2,7 +2,7 @@ import {
   getInlineSourceMappingUrlLinker,
   getSourceMappingUrlForEndOfFile,
   getSourceMappingUrlLinker,
-  rollupToStencilSourceMap,
+  bundlerToStencilSourceMap,
 } from '@utils';
 import { SourceMap as RollupSourceMap } from 'rollup';
 
@@ -11,11 +11,11 @@ import type * as d from '../../declarations';
 describe('sourcemaps', () => {
   describe('rollupToStencilSourceMap', () => {
     it('returns null if the given sourcemap is null', () => {
-      expect(rollupToStencilSourceMap(null)).toBeNull();
+      expect(bundlerToStencilSourceMap(null)).toBeNull();
     });
 
     it('returns null if the given sourcemap is undefined', () => {
-      expect(rollupToStencilSourceMap(undefined)).toBeNull();
+      expect(bundlerToStencilSourceMap(undefined)).toBeNull();
     });
 
     it('transforms a rollup sourcemap to a stencil sourcemap', () => {
@@ -32,7 +32,7 @@ describe('sourcemaps', () => {
         toUrl: () => 'stub',
       };
 
-      const stencilSourceMap = rollupToStencilSourceMap(rollupSourceMap);
+      const stencilSourceMap = bundlerToStencilSourceMap(rollupSourceMap);
 
       const expectedSourceMap: d.SourceMap = {
         file: 'index.js',

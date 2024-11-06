@@ -1,30 +1,30 @@
 import { generatePreamble, join, relativeImport } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rolldown';
 
+import type { BundleOutputOptions, Bundler } from '../../../compiler/bundle/bundle-interface';
 import type * as d from '../../../declarations';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateCjs = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  build: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const cjsOutputs = outputTargets.filter((o) => !!o.cjsDir);
 
   if (cjsOutputs.length > 0) {
     const outputTargetType = cjsOutputs[0].type;
-    const esmOpts: OutputOptions = {
+    const cjsOpts: BundleOutputOptions = {
       banner: generatePreamble(config),
       format: 'cjs',
       entryFileNames: '[name].cjs.js',
       assetFileNames: '[name]-[hash][extname]',
-      // preferConst: true,
+      preferConst: true,
       sourcemap: config.sourceMap,
     };
-    const results = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const results = await generateBundlerOutput(build, cjsOpts, config, buildCtx.entryModules);
     if (results != null) {
       const destinations = cjsOutputs
         .map((o) => o.cjsDir)
@@ -51,7 +51,7 @@ export const generateCjs = async (
 
 const generateShortcuts = (
   compilerCtx: d.CompilerCtx,
-  rollupResult: d.RollupResult[],
+  rollupResult: d.BundlerResult[],
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<void[]> => {
   const indexFilename = rollupResult.find((r) => r.type === 'chunk' && r.isIndex).fileName;

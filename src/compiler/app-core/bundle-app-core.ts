@@ -1,30 +1,29 @@
-import type { OutputAsset, OutputChunk, OutputOptions, RollupBuild } from 'rolldown';
-
 import type * as d from '../../declarations';
+import type { BundleOutputOptions, Bundler } from '../bundle/bundle-interface';
 import { STENCIL_CORE_ID } from '../bundle/entry-alias-ids';
 
 /**
- * Generate rollup output based on a rollup build and a series of options.
+ * Generate rollup or rolldown output based on a rollup or rolldown build and a series of options.
  *
- * @param build a rollup build
- * @param options output options for rollup
+ * @param bundler a rollup or rolldown build
+ * @param options output options for rollup or rolldown
  * @param config a user-supplied configuration object
  * @param entryModules a list of entry modules, for checking which chunks
  * contain components
  * @returns a Promise wrapping either build results or `null`
  */
-export const generateRollupOutput = async (
-  build: RollupBuild,
-  options: OutputOptions,
+export const generateBundlerOutput = async (
+  bundler: Bundler,
+  options: BundleOutputOptions,
   config: d.ValidatedConfig,
   entryModules: d.EntryModule[],
-): Promise<d.RollupResult[] | null> => {
-  if (build == null) {
+): Promise<d.BundlerResult[] | null> => {
+  if (bundler == null) {
     return null;
   }
 
-  const { output }: { output: [OutputChunk, ...(OutputChunk | OutputAsset)[]] } = await build.generate(options);
-  return output.map((chunk: OutputChunk | OutputAsset) => {
+  const { output } = await bundler.generate(options);
+  return output.map((chunk: any) => {
     if (chunk.type === 'chunk') {
       const isCore = Object.keys(chunk.modules).some((m) => m.includes(STENCIL_CORE_ID));
       return {

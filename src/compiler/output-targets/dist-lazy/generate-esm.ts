@@ -1,31 +1,31 @@
 import { generatePreamble, join, relativeImport } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rolldown';
 
 import type * as d from '../../../declarations';
-import type { RollupResult } from '../../../declarations';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import type { BundlerResult } from '../../../declarations';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { BundleOutputOptions, Bundler } from '../../bundle/bundle-interface';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsm = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const esmEs5Outputs = config.buildEs5 ? outputTargets.filter((o) => !!o.esmEs5Dir && !o.isBrowserBuild) : [];
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !o.isBrowserBuild);
   if (esmOutputs.length + esmEs5Outputs.length > 0) {
-    const esmOpts: OutputOptions = {
+    const esmOpts: BundleOutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
       entryFileNames: '[name].js',
       assetFileNames: '[name]-[hash][extname]',
-      // preferConst: true,
+      preferConst: true,
       sourcemap: config.sourceMap,
     };
     const outputTargetType = esmOutputs[0].type;
-    const output = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const output = await generateBundlerOutput(bundler, esmOpts, config, buildCtx.entryModules);
 
     if (output != null) {
       const es2017destinations = esmOutputs
@@ -108,7 +108,7 @@ const generateShortcuts = (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   outputTargets: d.OutputTargetDistLazy[],
-  rollupResult: RollupResult[],
+  rollupResult: BundlerResult[],
 ): Promise<void[]> => {
   const indexFilename = rollupResult.find((r) => r.type === 'chunk' && r.isIndex).fileName;
 

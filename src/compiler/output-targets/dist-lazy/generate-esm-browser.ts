@@ -1,31 +1,31 @@
 import { generatePreamble } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rolldown';
 
+import type { BundleOutputOptions, Bundler } from '../../../compiler/bundle/bundle-interface';
 import type * as d from '../../../declarations';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsmBrowser = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  build: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !!o.isBrowserBuild);
   if (esmOutputs.length) {
     const outputTargetType = esmOutputs[0].type;
-    const esmOpts: OutputOptions = {
+    const esmOpts: BundleOutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
       entryFileNames: '[name].esm.js',
       chunkFileNames: config.hashFileNames ? 'p-[hash].js' : '[name]-[hash].js',
       assetFileNames: config.hashFileNames ? 'p-[hash][extname]' : '[name]-[hash][extname]',
-      // preferConst: true,
+      preferConst: true,
       sourcemap: config.sourceMap,
     };
 
-    const output = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const output = await generateBundlerOutput(build, esmOpts, config, buildCtx.entryModules);
 
     if (output != null) {
       const es2017destinations = esmOutputs

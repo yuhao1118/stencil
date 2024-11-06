@@ -203,6 +203,7 @@ export const validateConfig = (
   setBooleanConfig(validatedConfig, 'autoprefixCss', null, validatedConfig.buildEs5);
   setBooleanConfig(validatedConfig, 'validateTypes', null, !validatedConfig._isTesting);
   setBooleanConfig(validatedConfig, 'allowInlineScripts', null, true);
+  setBooleanConfig(validatedConfig, 'experimentalRolldown', null, false);
 
   if (!isString(validatedConfig.taskQueue)) {
     validatedConfig.taskQueue = 'async';
