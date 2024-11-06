@@ -1,5 +1,6 @@
 import type * as d from '../../declarations';
-import type { BundleOutputOptions, Bundler } from '../bundle/bundle-interface';
+import type { OutputOptions } from '../bundle/bundle-interface';
+import type { Bundler } from '../bundle/bundler-helper';
 import { STENCIL_CORE_ID } from '../bundle/entry-alias-ids';
 
 /**
@@ -14,7 +15,7 @@ import { STENCIL_CORE_ID } from '../bundle/entry-alias-ids';
  */
 export const generateBundlerOutput = async (
   bundler: Bundler,
-  options: BundleOutputOptions,
+  options: OutputOptions,
   config: d.ValidatedConfig,
   entryModules: d.EntryModule[],
 ): Promise<d.BundlerResult[] | null> => {

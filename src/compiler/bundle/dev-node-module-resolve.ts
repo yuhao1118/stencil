@@ -1,9 +1,9 @@
 import { join, relative } from '@utils';
 import { basename, dirname } from 'path';
-import { ResolveIdResult } from 'rollup';
 
 import type * as d from '../../declarations';
 import { InMemoryFileSystem } from '../sys/in-memory-fs';
+import { ResolveIdResult } from './bundle-interface';
 import { DEV_MODULE_DIR } from './constants';
 
 export const devNodeModuleResolveId = async (

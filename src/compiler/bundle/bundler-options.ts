@@ -3,13 +3,13 @@ import rollupJsonPlugin from '@rollup/plugin-json';
 import rollupNodeResolvePlugin from '@rollup/plugin-node-resolve';
 import rollupReplacePlugin from '@rollup/plugin-replace';
 import { createOnWarnFn, isString } from '@utils';
-import { PluginContext, TreeshakingOptions } from 'rollup';
 
 import type * as d from '../../declarations';
 import { lazyComponentPlugin } from '../output-targets/dist-lazy/lazy-component-plugin';
 import { createCustomResolverAsync } from '../sys/resolve/resolve-module-async';
 import { appDataPlugin } from './app-data-plugin';
 import type { BundleInputOptions, BundleOptions } from './bundle-interface';
+import { PluginContext, TreeshakingOptions } from './bundle-interface';
 import { coreResolvePlugin } from './core-resolve-plugin';
 import { devNodeModuleResolveId } from './dev-node-module-resolve';
 import { extFormatPlugin } from './ext-format-plugin';

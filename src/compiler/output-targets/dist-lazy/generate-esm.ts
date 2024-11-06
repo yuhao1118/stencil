@@ -3,7 +3,8 @@ import { generatePreamble, join, relativeImport } from '@utils';
 import type * as d from '../../../declarations';
 import type { BundlerResult } from '../../../declarations';
 import { generateBundlerOutput } from '../../app-core/bundle-app-core';
-import type { BundleOutputOptions, Bundler } from '../../bundle/bundle-interface';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsm = async (
@@ -16,7 +17,7 @@ export const generateEsm = async (
   const esmEs5Outputs = config.buildEs5 ? outputTargets.filter((o) => !!o.esmEs5Dir && !o.isBrowserBuild) : [];
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !o.isBrowserBuild);
   if (esmOutputs.length + esmEs5Outputs.length > 0) {
-    const esmOpts: BundleOutputOptions = {
+    const esmOpts: OutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
       entryFileNames: '[name].js',

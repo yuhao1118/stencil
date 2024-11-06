@@ -1,8 +1,9 @@
 import { generatePreamble } from '@utils';
 
-import type { BundleOutputOptions, Bundler } from '../../../compiler/bundle/bundle-interface';
 import type * as d from '../../../declarations';
 import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsmBrowser = async (
@@ -15,7 +16,7 @@ export const generateEsmBrowser = async (
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !!o.isBrowserBuild);
   if (esmOutputs.length) {
     const outputTargetType = esmOutputs[0].type;
-    const esmOpts: BundleOutputOptions = {
+    const esmOpts: OutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
       entryFileNames: '[name].esm.js',

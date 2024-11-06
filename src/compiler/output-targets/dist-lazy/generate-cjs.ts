@@ -1,8 +1,9 @@
 import { generatePreamble, join, relativeImport } from '@utils';
 
-import type { BundleOutputOptions, Bundler } from '../../../compiler/bundle/bundle-interface';
 import type * as d from '../../../declarations';
 import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateCjs = async (
@@ -16,7 +17,7 @@ export const generateCjs = async (
 
   if (cjsOutputs.length > 0) {
     const outputTargetType = cjsOutputs[0].type;
-    const cjsOpts: BundleOutputOptions = {
+    const cjsOpts: OutputOptions = {
       banner: generatePreamble(config),
       format: 'cjs',
       entryFileNames: '[name].cjs.js',

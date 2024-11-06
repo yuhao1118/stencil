@@ -3,7 +3,8 @@ import { generatePreamble, join, relativeImport } from '@utils';
 import type * as d from '../../../declarations';
 import { getAppBrowserCorePolyfills } from '../../app-core/app-polyfills';
 import { generateBundlerOutput } from '../../app-core/bundle-app-core';
-import type { BundleOutputOptions, Bundler } from '../../bundle/bundle-interface';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateSystem = async (
@@ -16,7 +17,7 @@ export const generateSystem = async (
   const systemOutputs = outputTargets.filter((o) => !!o.systemDir);
 
   if (systemOutputs.length > 0) {
-    const esmOpts: BundleOutputOptions = {
+    const esmOpts: OutputOptions = {
       banner: generatePreamble(config),
       format: 'system',
       entryFileNames: config.hashFileNames ? 'p-[hash].system.js' : '[name].system.js',

@@ -1,4 +1,4 @@
-import type { BundlerSourceMap } from '../compiler/bundle/bundle-interface';
+import type { SourceMap } from '../compiler/bundle/bundle-interface';
 import type * as d from '../declarations';
 
 /**
@@ -8,8 +8,8 @@ import type * as d from '../declarations';
  */
 export function bundlerToStencilSourceMap(bundlerSourceMap: null): null;
 export function bundlerToStencilSourceMap(bundlerSourceMap: undefined): null;
-export function bundlerToStencilSourceMap(bundlerSourceMap: BundlerSourceMap): d.SourceMap;
-export function bundlerToStencilSourceMap(bundlerSourceMap: BundlerSourceMap | undefined | null): d.SourceMap | null {
+export function bundlerToStencilSourceMap(bundlerSourceMap: SourceMap): d.SourceMap;
+export function bundlerToStencilSourceMap(bundlerSourceMap: SourceMap | undefined | null): d.SourceMap | null {
   if (!bundlerSourceMap) {
     return null;
   }

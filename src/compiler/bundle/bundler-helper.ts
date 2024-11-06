@@ -2,7 +2,11 @@ import { type OutputOptions as RolldownOutputOptions, rolldown, type RolldownOpt
 import { rollup } from 'rollup';
 
 import type { ValidatedConfig } from '../../declarations';
-import type { BundleInputOptions, BundleOutput, Bundler } from './bundle-interface';
+import type { BundleInputOptions, BundleOutput, OutputOptions } from './bundle-interface';
+
+export interface Bundler {
+  generate: (options: OutputOptions) => Promise<BundleOutput>;
+}
 
 // TODO: rolldown is designed to be a drop-in replacement for rollup, but it's not quite there yet
 // so we need to cast to unknown as a temporary fix. In the future we should remove this cast.

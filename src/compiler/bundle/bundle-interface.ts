@@ -1,10 +1,4 @@
-import type {
-  OutputOptions as RollupOutputOptions,
-  PreserveEntrySignaturesOption,
-  RollupOptions,
-  RollupOutput,
-  SourceMap as RollupSourceMap,
-} from 'rollup';
+import type { PreserveEntrySignaturesOption } from 'rollup';
 import type { SourceFile, TransformerFactory } from 'typescript';
 
 import type { BuildConditionals } from '../../declarations';
@@ -66,11 +60,19 @@ export interface BundleOptions {
   preserveEntrySignatures?: PreserveEntrySignaturesOption;
 }
 
-export type BundleInputOptions = RollupOptions;
-export type BundleOutputOptions = RollupOutputOptions;
-export type BundleOutput = RollupOutput;
-export type BundlerSourceMap = RollupSourceMap;
-
-export interface Bundler {
-  generate: (options: BundleOutputOptions) => Promise<BundleOutput>;
-}
+// Re-export rollup types from rollup, so we don't have to import from rollup directly
+// In the future we should change this to use the types from rolldown
+export type {
+  RollupCache as BundleCache,
+  RollupOptions as BundleInputOptions,
+  RollupOutput as BundleOutput,
+  LoadResult,
+  OutputOptions,
+  Plugin,
+  PluginContext,
+  ResolveIdResult,
+  SourceMap,
+  TransformPluginContext,
+  TransformResult,
+  TreeshakingOptions,
+} from 'rollup';

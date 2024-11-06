@@ -1,11 +1,11 @@
 import { isString, normalizeFsPath } from '@utils';
 import { basename, isAbsolute } from 'path';
-import type { LoadResult, Plugin, TransformResult } from 'rollup';
 import ts from 'typescript';
 
 import type * as d from '../../declarations';
 import { tsResolveModuleName } from '../sys/typescript/typescript-resolve-module';
 import { getModule } from '../transpile/transpiled-module';
+import type { LoadResult, Plugin, TransformResult } from './bundle-interface';
 import type { BundleOptions } from './bundle-interface';
 
 /**

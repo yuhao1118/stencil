@@ -3,7 +3,7 @@ import { basename, dirname } from 'path';
 
 import type * as d from '../../declarations';
 import { BuildContext } from '../build/build-ctx';
-import type { BundleOutputOptions } from './bundle-interface';
+import type { OutputOptions } from './bundle-interface';
 import { createBundler } from './bundler-helper';
 import { createBundlerConfig } from './bundler-options';
 import { DEV_MODULE_CACHE_BUSTER, DEV_MODULE_DIR } from './constants';
@@ -99,7 +99,7 @@ const bundleDevModule = async (
     });
     const bundler = await createBundler(config, inputOpts);
 
-    const outputOpts: BundleOutputOptions = {
+    const outputOpts: OutputOptions = {
       banner: generatePreamble(config),
       format: 'es',
     };

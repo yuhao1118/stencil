@@ -1,10 +1,10 @@
 import { hasError, isOutputTargetDistCollection, join, mergeIntoWith, normalizeFsPath, relative } from '@utils';
-import type { Plugin } from 'rollup';
 
 import type * as d from '../../declarations';
 import { runPluginTransformsEsmImports } from '../plugin/plugin';
 import { getScopeId } from '../style/scope-css';
 import { parseImportPath } from '../transformers/stencil-import-path';
+import type { Plugin } from './bundle-interface';
 
 /**
  * This keeps a map of all the component styles we've seen already so we can create

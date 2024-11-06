@@ -1,8 +1,8 @@
 import {
+  bundlerToStencilSourceMap,
   getInlineSourceMappingUrlLinker,
   getSourceMappingUrlForEndOfFile,
   getSourceMappingUrlLinker,
-  bundlerToStencilSourceMap,
 } from '@utils';
 import { SourceMap as RollupSourceMap } from 'rollup';
 

@@ -1,7 +1,7 @@
 import { normalizeFsPath } from '@utils';
-import type { Plugin } from 'rollup';
 
 import { InMemoryFileSystem } from '../sys/in-memory-fs';
+import type { Plugin } from './bundle-interface';
 
 export const fileLoadPlugin = (fs: InMemoryFileSystem): Plugin => {
   return {

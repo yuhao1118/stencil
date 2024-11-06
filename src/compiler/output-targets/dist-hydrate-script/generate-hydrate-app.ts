@@ -2,7 +2,8 @@ import type * as d from '@stencil/core/declarations';
 import { catchError, createOnWarnFn, generatePreamble, join, loadRollupDiagnostics } from '@utils';
 import MagicString from 'magic-string';
 
-import type { BundleInputOptions, Bundler } from '../../bundle/bundle-interface';
+import type { BundleInputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { createBundler } from '../../bundle/bundler-helper';
 import {
   STENCIL_APP_DATA_ID,
