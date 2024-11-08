@@ -10,7 +10,7 @@ export const generateCjs = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  build: Bundler,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const cjsOutputs = outputTargets.filter((o) => !!o.cjsDir);
@@ -25,7 +25,7 @@ export const generateCjs = async (
       preferConst: true,
       sourcemap: config.sourceMap,
     };
-    const results = await generateBundlerOutput(build, cjsOpts, config, buildCtx.entryModules);
+    const results = await generateBundlerOutput(bundler, cjsOpts, config, buildCtx.entryModules);
     if (results != null) {
       const destinations = cjsOutputs
         .map((o) => o.cjsDir)

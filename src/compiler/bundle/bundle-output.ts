@@ -3,7 +3,7 @@ import { loadRollupDiagnostics } from '@utils';
 import type * as d from '../../declarations';
 import type { BundleOptions } from './bundle-interface';
 import { createBundler } from './bundler-helper';
-import { createBundlerConfig } from './bundler-options';
+import { createBundlerOptions } from './bundler-options';
 
 export const bundleOutput = async (
   config: d.ValidatedConfig,
@@ -14,8 +14,12 @@ export const bundleOutput = async (
   try {
     config.logger.debug(`Bundling with ${config.experimentalRolldown ? 'rolldown' : 'rollup'}`);
 
-    const bundlerInputOptions = createBundlerConfig(config, compilerCtx, buildCtx, bundleOpts);
+    const bundlerInputOptions = createBundlerOptions(config, compilerCtx, buildCtx, bundleOpts);
     const bundler = await createBundler(config, bundlerInputOptions);
+
+    if (bundler.cache) {
+      compilerCtx.rollupCache.set(bundleOpts.id, bundler.cache);
+    }
 
     return bundler;
   } catch (e: any) {

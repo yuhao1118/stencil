@@ -66,6 +66,7 @@ export type {
   RollupCache as BundleCache,
   RollupOptions as BundleInputOptions,
   RollupOutput as BundleOutput,
+  RollupCache as BundlerCache,
   LoadResult,
   OutputOptions,
   Plugin,

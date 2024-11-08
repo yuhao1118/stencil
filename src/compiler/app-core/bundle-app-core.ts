@@ -24,7 +24,7 @@ export const generateBundlerOutput = async (
   }
 
   const { output } = await bundler.generate(options);
-  return output.map((chunk: any) => {
+  return output.map((chunk) => {
     if (chunk.type === 'chunk') {
       const isCore = Object.keys(chunk.modules).some((m) => m.includes(STENCIL_CORE_ID));
       return {

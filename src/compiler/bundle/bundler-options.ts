@@ -207,7 +207,7 @@ const getTreeshakeOption = (config: d.ValidatedConfig, bundleOpts: BundleOptions
   return treeshake;
 };
 
-export const createBundlerConfig = (
+export const createBundlerOptions = (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,

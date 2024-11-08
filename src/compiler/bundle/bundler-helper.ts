@@ -2,10 +2,11 @@ import { type OutputOptions as RolldownOutputOptions, rolldown, type RolldownOpt
 import { rollup } from 'rollup';
 
 import type { ValidatedConfig } from '../../declarations';
-import type { BundleInputOptions, BundleOutput, OutputOptions } from './bundle-interface';
+import type { BundleInputOptions, BundleOutput, BundlerCache, OutputOptions } from './bundle-interface';
 
 export interface Bundler {
   generate: (options: OutputOptions) => Promise<BundleOutput>;
+  cache?: BundlerCache;
 }
 
 // TODO: rolldown is designed to be a drop-in replacement for rollup, but it's not quite there yet
@@ -26,6 +27,7 @@ const createRollupBundler = async (options: BundleInputOptions): Promise<Bundler
     generate: async (options) => {
       return bundler.generate(options);
     },
+    cache: bundler.cache,
   };
 };
 

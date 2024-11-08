@@ -10,7 +10,7 @@ export const generateEsmBrowser = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  build: Bundler,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !!o.isBrowserBuild);
@@ -26,7 +26,7 @@ export const generateEsmBrowser = async (
       sourcemap: config.sourceMap,
     };
 
-    const output = await generateBundlerOutput(build, esmOpts, config, buildCtx.entryModules);
+    const output = await generateBundlerOutput(bundler, esmOpts, config, buildCtx.entryModules);
 
     if (output != null) {
       const es2017destinations = esmOutputs

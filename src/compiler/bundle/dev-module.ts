@@ -5,7 +5,7 @@ import type * as d from '../../declarations';
 import { BuildContext } from '../build/build-ctx';
 import type { OutputOptions } from './bundle-interface';
 import { createBundler } from './bundler-helper';
-import { createBundlerConfig } from './bundler-options';
+import { createBundlerOptions } from './bundler-options';
 import { DEV_MODULE_CACHE_BUSTER, DEV_MODULE_DIR } from './constants';
 
 export const compilerRequest = async (
@@ -90,7 +90,7 @@ const bundleDevModule = async (
   const buildCtx = new BuildContext(config, compilerCtx);
 
   try {
-    const inputOpts = createBundlerConfig(config, compilerCtx, buildCtx, {
+    const inputOpts = createBundlerOptions(config, compilerCtx, buildCtx, {
       id: parsedUrl.nodeModuleId,
       platform: 'client',
       inputs: {
