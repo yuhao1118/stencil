@@ -278,7 +278,7 @@ const writeLazyEntry = async (
   if (isBrowserBuild && ['loader'].includes(rollupResult.entryKey)) {
     return;
   }
-  const inputCode = rollupResult.code.replace(`[/*!__STENCIL_LAZY_DATA__*/]`, `${lazyRuntimeData}`);
+  const inputCode = rollupResult.code.replace(`[__STENCIL_LAZY_DATA__]`, `${lazyRuntimeData}`);
   const { code, sourceMap } = await convertChunk(
     config,
     compilerCtx,

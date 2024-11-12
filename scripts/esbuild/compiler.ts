@@ -68,6 +68,9 @@ export async function buildCompiler(opts: BuildOptions) {
   // `createReplaceData` being called before it
   const replaceData = createReplaceData(opts);
 
+  // TODO: this is a hack to get import.meta.url to work in esbuild
+  replaceData['import.meta.url'] = `"file://" + __filename`;
+
   // stuff to patch typescript before bundling
   const tsPath = require.resolve('typescript');
   await bundleTypeScriptSource(tsPath, opts);

@@ -187,13 +187,15 @@
     "puppeteer": "^21.0.0",
     "rimraf": "^6.0.1",
     "rollup": "2.56.3",
-    "rolldown": "nightly",
     "semver": "^7.3.7",
     "terser": "5.31.1",
     "tsx": "^4.10.3",
     "typescript": "~5.5.4",
     "webpack": "^5.75.0",
     "ws": "8.17.1"
+  },
+  "dependencies": {
+    "rolldown": "nightly"
   },
   "engines": {
     "node": ">=16.0.0",
