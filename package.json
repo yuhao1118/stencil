@@ -194,6 +194,9 @@
     "webpack": "^5.75.0",
     "ws": "8.17.1"
   },
+  "dependencies": {
+    "rolldown": "nightly"
+  },
   "engines": {
     "node": ">=16.0.0",
     "npm": ">=7.10.0"

@@ -370,15 +370,15 @@ export type SourceTarget = 'es5' | 'es2017' | 'latest';
  * Updates to rollup may require these typings to be updated.
  */
 
-export type RollupResult = RollupChunkResult | RollupAssetResult;
+export type BundlerResult = BundlerChunkResult | BundlerAssetResult;
 
-export interface RollupAssetResult {
+export interface BundlerAssetResult {
   type: 'asset';
   fileName: string;
   content: string;
 }
 
-export interface RollupChunkResult {
+export interface BundlerChunkResult {
   type: 'chunk';
   entryKey: string;
   fileName: string;
@@ -390,10 +390,10 @@ export interface RollupChunkResult {
   isBrowserLoader: boolean;
   imports: string[];
   moduleFormat: ModuleFormat;
-  map?: RollupSourceMap;
+  map?: BundlerSourceMap;
 }
 
-export interface RollupSourceMap {
+export interface BundlerSourceMap {
   file: string;
   mappings: string;
   names: string[];
@@ -415,7 +415,7 @@ export type OptimizeJsResult = {
 
 export interface BundleModule {
   entryKey: string;
-  rollupResult: RollupChunkResult;
+  rollupResult: BundlerChunkResult;
   cmps: ComponentCompilerMeta[];
   output: BundleModuleOutput;
 }

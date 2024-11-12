@@ -1,11 +1,11 @@
 import { isRemoteUrl, join, normalizeFsPath, normalizePath } from '@utils';
 import { dirname } from 'path';
-import type { Plugin } from 'rollup';
 
 import type * as d from '../../declarations';
 import { HYDRATED_CSS } from '../../runtime/runtime-constants';
 import { fetchModuleAsync } from '../sys/fetch/fetch-module-async';
 import { getStencilModuleUrl, packageVersions } from '../sys/fetch/fetch-utils';
+import type { Plugin } from './bundle-interface';
 import {
   APP_DATA_CONDITIONAL,
   STENCIL_CORE_ID,

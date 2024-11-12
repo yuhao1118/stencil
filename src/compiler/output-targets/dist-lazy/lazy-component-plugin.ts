@@ -1,7 +1,7 @@
 import { normalizePath } from '@utils';
-import type { Plugin } from 'rollup';
 
 import type * as d from '../../../declarations';
+import type { Plugin } from '../../bundle/bundle-interface';
 
 export const lazyComponentPlugin = (buildCtx: d.BuildCtx): Plugin => {
   const entrys = new Map<string, d.EntryModule>();

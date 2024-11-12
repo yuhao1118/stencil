@@ -1,15 +1,16 @@
 import { generatePreamble } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rollup';
 
 import type * as d from '../../../declarations';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsmBrowser = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const esmOutputs = outputTargets.filter((o) => !!o.esmDir && !!o.isBrowserBuild);
@@ -25,7 +26,7 @@ export const generateEsmBrowser = async (
       sourcemap: config.sourceMap,
     };
 
-    const output = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const output = await generateBundlerOutput(bundler, esmOpts, config, buildCtx.entryModules);
 
     if (output != null) {
       const es2017destinations = esmOutputs

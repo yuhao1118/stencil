@@ -1,6 +1,5 @@
-import type { RollupCache } from 'rollup';
-
 import type * as d from '../../declarations';
+import type { BundleCache } from '../bundle/bundle-interface';
 import { outputCopy } from './copy/output-copy';
 import { outputCollection } from './dist-collection';
 import { outputCustomElements } from './dist-custom-elements';
@@ -58,7 +57,7 @@ export const generateOutputTargets = async (
 
 const invalidateRollupCaches = (compilerCtx: d.CompilerCtx) => {
   const invalidatedIds = compilerCtx.changedFiles;
-  compilerCtx.rollupCache.forEach((cache: RollupCache) => {
+  compilerCtx.rollupCache.forEach((cache: BundleCache) => {
     cache.modules.forEach((mod) => {
       if (mod.transformDependencies.some((id) => invalidatedIds.has(id))) {
         mod.originalCode = null;

@@ -1,16 +1,17 @@
 import { generatePreamble, join, relativeImport } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rollup';
 
 import type * as d from '../../../declarations';
-import type { RollupResult } from '../../../declarations';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import type { BundlerResult } from '../../../declarations';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateEsm = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const esmEs5Outputs = config.buildEs5 ? outputTargets.filter((o) => !!o.esmEs5Dir && !o.isBrowserBuild) : [];
@@ -25,7 +26,7 @@ export const generateEsm = async (
       sourcemap: config.sourceMap,
     };
     const outputTargetType = esmOutputs[0].type;
-    const output = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const output = await generateBundlerOutput(bundler, esmOpts, config, buildCtx.entryModules);
 
     if (output != null) {
       const es2017destinations = esmOutputs
@@ -108,7 +109,7 @@ const generateShortcuts = (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   outputTargets: d.OutputTargetDistLazy[],
-  rollupResult: RollupResult[],
+  rollupResult: BundlerResult[],
 ): Promise<void[]> => {
   const indexFilename = rollupResult.find((r) => r.type === 'chunk' && r.isIndex).fileName;
 

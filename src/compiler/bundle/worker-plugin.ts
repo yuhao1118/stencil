@@ -1,8 +1,8 @@
 import { generatePreamble, hasError, normalizeFsPath } from '@utils';
-import type { Plugin, PluginContext, TransformResult } from 'rollup';
 
 import type * as d from '../../declarations';
 import { optimizeModule } from '../optimize/optimize-module';
+import type { Plugin, PluginContext, TransformResult } from './bundle-interface';
 import { bundleOutput } from './bundle-output';
 import { STENCIL_INTERNAL_ID } from './entry-alias-ids';
 

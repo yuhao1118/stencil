@@ -63,13 +63,13 @@ export const outputLazy = async (
       bundleOpts.inputs[entryModule.entryKey] = entryModule.entryKey;
     });
 
-    const rollupBuild = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
-    if (rollupBuild != null) {
+    const bundler = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
+    if (bundler != null) {
       const results: d.UpdatedLazyBuildCtx[] = await Promise.all([
-        generateEsmBrowser(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateEsm(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateSystem(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
-        generateCjs(config, compilerCtx, buildCtx, rollupBuild, outputTargets),
+        generateEsmBrowser(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateEsm(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateSystem(config, compilerCtx, buildCtx, bundler, outputTargets),
+        generateCjs(config, compilerCtx, buildCtx, bundler, outputTargets),
       ]);
 
       results.forEach((result) => {
@@ -176,20 +176,21 @@ const getLazyEntry = (isBrowser: boolean): string => {
   const s = new MagicString(``);
   s.append(`export { setNonce } from '${STENCIL_CORE_ID}';\n`);
   s.append(`import { bootstrapLazy } from '${STENCIL_CORE_ID}';\n`);
+  s.append(`const getLazyBundles = () => { try { return [__STENCIL_LAZY_DATA__]; } catch (e) { return []; } };\n`);
 
   if (isBrowser) {
     s.append(`import { patchBrowser } from '${STENCIL_INTERNAL_CLIENT_PATCH_BROWSER_ID}';\n`);
     s.append(`import { globalScripts } from '${STENCIL_APP_GLOBALS_ID}';\n`);
     s.append(`patchBrowser().then(async (options) => {\n`);
     s.append(`  await globalScripts();\n`);
-    s.append(`  return bootstrapLazy([/*!__STENCIL_LAZY_DATA__*/], options);\n`);
+    s.append(`  return bootstrapLazy(getLazyBundles(), options);\n`);
     s.append(`});\n`);
   } else {
     s.append(`import { globalScripts } from '${STENCIL_APP_GLOBALS_ID}';\n`);
     s.append(`export const defineCustomElements = async (win, options) => {\n`);
     s.append(`  if (typeof window === 'undefined') return undefined;\n`);
     s.append(`  await globalScripts();\n`);
-    s.append(`  return bootstrapLazy([/*!__STENCIL_LAZY_DATA__*/], options);\n`);
+    s.append(`  return bootstrapLazy(getLazyBundles(), options);\n`);
     s.append(`};\n`);
   }
 

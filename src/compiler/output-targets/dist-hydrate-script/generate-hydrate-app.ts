@@ -1,9 +1,10 @@
 import type * as d from '@stencil/core/declarations';
 import { catchError, createOnWarnFn, generatePreamble, join, loadRollupDiagnostics } from '@utils';
 import MagicString from 'magic-string';
-import { RollupOptions } from 'rollup';
-import { rollup, type RollupBuild } from 'rollup';
 
+import type { BundleInputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
+import { createBundler } from '../../bundle/bundler-helper';
 import {
   STENCIL_APP_DATA_ID,
   STENCIL_HYDRATE_FACTORY_ID,
@@ -21,20 +22,20 @@ import { writeHydrateOutputs } from './write-hydrate-outputs';
 
 const buildHydrateAppFor = async (
   format: 'esm' | 'cjs',
-  rollupBuild: RollupBuild,
+  bundler: Bundler,
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
   outputTargets: d.OutputTargetHydrate[],
 ) => {
   const file = format === 'esm' ? 'index.mjs' : 'index.js';
-  const rollupOutput = await rollupBuild.generate({
+  const bundlerOutput = await bundler.generate({
     banner: generatePreamble(config),
     format,
     file,
   });
 
-  await writeHydrateOutputs(config, compilerCtx, buildCtx, outputTargets, rollupOutput);
+  await writeHydrateOutputs(config, compilerCtx, buildCtx, outputTargets, bundlerOutput);
 };
 
 /**
@@ -57,7 +58,7 @@ export const generateHydrateApp = async (
     const mockDoc = join(packageDir, 'mock-doc', 'index.js');
     const appData = join(packageDir, 'internal', 'app-data', 'index.js');
 
-    const rollupOptions: RollupOptions = {
+    const bundlerOptions: BundleInputOptions = {
       ...config.rollupConfig.inputOptions,
       external: ['stream'],
 
@@ -98,10 +99,10 @@ export const generateHydrateApp = async (
       onwarn: createOnWarnFn(buildCtx.diagnostics),
     };
 
-    const rollupAppBuild = await rollup(rollupOptions);
+    const bundler = await createBundler(config, bundlerOptions);
     await Promise.all([
-      buildHydrateAppFor('cjs', rollupAppBuild, config, compilerCtx, buildCtx, outputTargets),
-      buildHydrateAppFor('esm', rollupAppBuild, config, compilerCtx, buildCtx, outputTargets),
+      buildHydrateAppFor('cjs', bundler, config, compilerCtx, buildCtx, outputTargets),
+      buildHydrateAppFor('esm', bundler, config, compilerCtx, buildCtx, outputTargets),
     ]);
   } catch (e: any) {
     if (!buildCtx.hasError) {
@@ -117,9 +118,9 @@ const generateHydrateFactory = async (config: d.ValidatedConfig, compilerCtx: d.
     try {
       const appFactoryEntryCode = await generateHydrateFactoryEntry(buildCtx);
 
-      const rollupFactoryBuild = await bundleHydrateFactory(config, compilerCtx, buildCtx, appFactoryEntryCode);
-      if (rollupFactoryBuild != null) {
-        const rollupOutput = await rollupFactoryBuild.generate({
+      const bundler = await bundleHydrateFactory(config, compilerCtx, buildCtx, appFactoryEntryCode);
+      if (bundler != null) {
+        const bundlerOutput = await bundler.generate({
           format: 'cjs',
           esModule: false,
           strict: false,
@@ -129,8 +130,8 @@ const generateHydrateFactory = async (config: d.ValidatedConfig, compilerCtx: d.
           inlineDynamicImports: true,
         });
 
-        if (!buildCtx.hasError && rollupOutput != null && Array.isArray(rollupOutput.output)) {
-          return rollupOutput.output[0].code;
+        if (!buildCtx.hasError && bundlerOutput != null && Array.isArray(bundlerOutput.output)) {
+          return bundlerOutput.output[0].code;
         }
       }
     } catch (e: any) {

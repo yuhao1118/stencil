@@ -1,16 +1,17 @@
 import { generatePreamble, join, relativeImport } from '@utils';
-import type { OutputOptions, RollupBuild } from 'rollup';
 
 import type * as d from '../../../declarations';
 import { getAppBrowserCorePolyfills } from '../../app-core/app-polyfills';
-import { generateRollupOutput } from '../../app-core/bundle-app-core';
+import { generateBundlerOutput } from '../../app-core/bundle-app-core';
+import type { OutputOptions } from '../../bundle/bundle-interface';
+import type { Bundler } from '../../bundle/bundler-helper';
 import { generateLazyModules } from './generate-lazy-module';
 
 export const generateSystem = async (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
   buildCtx: d.BuildCtx,
-  rollupBuild: RollupBuild,
+  bundler: Bundler,
   outputTargets: d.OutputTargetDistLazy[],
 ): Promise<d.UpdatedLazyBuildCtx> => {
   const systemOutputs = outputTargets.filter((o) => !!o.systemDir);
@@ -25,7 +26,7 @@ export const generateSystem = async (
       preferConst: true,
       sourcemap: config.sourceMap,
     };
-    const results = await generateRollupOutput(rollupBuild, esmOpts, config, buildCtx.entryModules);
+    const results = await generateBundlerOutput(bundler, esmOpts, config, buildCtx.entryModules);
     if (results != null) {
       const destinations = systemOutputs
         .map((o) => o.esmDir)
@@ -52,10 +53,10 @@ export const generateSystem = async (
 const generateSystemLoaders = (
   config: d.ValidatedConfig,
   compilerCtx: d.CompilerCtx,
-  rollupResult: d.RollupResult[],
+  bundlerResult: d.BundlerResult[],
   systemOutputs: d.OutputTargetDistLazy[],
 ): Promise<void[]> => {
-  const loaderFilename = rollupResult.find((r) => r.type === 'chunk' && r.isBrowserLoader).fileName;
+  const loaderFilename = bundlerResult.find((r) => r.type === 'chunk' && r.isBrowserLoader).fileName;
 
   return Promise.all(systemOutputs.map((o) => writeSystemLoader(config, compilerCtx, loaderFilename, o)));
 };

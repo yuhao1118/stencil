@@ -309,6 +309,11 @@ export interface StencilConfig {
    */
   excludeUnusedDependencies?: boolean;
   stencilCoreResolvedId?: string;
+
+  /**
+   * Experimental flag to enable the use of rolldown for bundling.
+   */
+  experimentalRolldown?: boolean;
 }
 
 interface ConfigExtrasBase {

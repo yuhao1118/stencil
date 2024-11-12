@@ -1,8 +1,8 @@
 import { isOutputTargetHydrate, isString, normalizeFsPath } from '@utils';
 import { isAbsolute } from 'path';
-import type { Plugin } from 'rollup';
 
 import type * as d from '../../declarations';
+import type { Plugin } from './bundle-interface';
 
 export const serverPlugin = (config: d.ValidatedConfig, platform: string): Plugin => {
   const isHydrateBundle = platform === 'hydrate';

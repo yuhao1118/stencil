@@ -1,4 +1,5 @@
 import {
+  bundlerToStencilSourceMap,
   catchError,
   dashToPascalCase,
   generatePreamble,
@@ -7,7 +8,6 @@ import {
   isOutputTargetDistCustomElements,
   isString,
   join,
-  rollupToStencilSourceMap,
 } from '@utils';
 import ts from 'typescript';
 
@@ -116,7 +116,7 @@ export const bundleCustomElements = async (
     const build = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
 
     if (build) {
-      const rollupOutput = await build.generate({
+      const bundlerOutput = await build.generate({
         banner: generatePreamble(config),
         format: 'esm',
         sourcemap: config.sourceMap,
@@ -142,10 +142,10 @@ export const bundleCustomElements = async (
       }
 
       const minify = outputTarget.externalRuntime || outputTarget.minify !== true ? false : config.minifyJs;
-      const files = rollupOutput.output.map(async (bundle) => {
+      const files = bundlerOutput.output.map(async (bundle) => {
         if (bundle.type === 'chunk') {
           let code = bundle.code;
-          let sourceMap = bundle.map ? rollupToStencilSourceMap(bundle.map) : undefined;
+          let sourceMap = bundle.map ? bundlerToStencilSourceMap(bundle.map) : undefined;
 
           const optimizeResults = await optimizeModule(config, compilerCtx, {
             input: code,

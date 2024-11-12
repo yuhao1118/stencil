@@ -42,8 +42,8 @@ export const bundleHydrateFactory = async (
       },
     };
 
-    const rollupBuild = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
-    return rollupBuild;
+    const build = await bundleOutput(config, compilerCtx, buildCtx, bundleOpts);
+    return build;
   } catch (e: any) {
     if (!buildCtx.hasError) {
       // TODO(STENCIL-353): Implement a type guard that balances using our own copy of Rollup types (which are

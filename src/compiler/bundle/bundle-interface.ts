@@ -59,3 +59,21 @@ export interface BundleOptions {
    */
   preserveEntrySignatures?: PreserveEntrySignaturesOption;
 }
+
+// Re-export rollup types from rollup, so we don't have to import from rollup directly
+// In the future we should change this to use the types from rolldown
+export type {
+  RollupCache as BundleCache,
+  RollupOptions as BundleInputOptions,
+  RollupOutput as BundleOutput,
+  RollupCache as BundlerCache,
+  LoadResult,
+  OutputOptions,
+  Plugin,
+  PluginContext,
+  ResolveIdResult,
+  SourceMap,
+  TransformPluginContext,
+  TransformResult,
+  TreeshakingOptions,
+} from 'rollup';
